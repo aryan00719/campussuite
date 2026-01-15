@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        amber: "#F59E0B",
+                        red: "#EF4444",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-10">
+
+        <h2 class="text-3xl font-bold text-navy mb-8">
+            Admin Dashboard
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-6">
+            This dashboard highlights community-verified issues to help administrators prioritize action.
+        </p>
+
+        <!-- Status Cards -->
+        <div class="grid md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Open Issues</h3>
+                <p class="text-3xl font-bold text-amber">12</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Verified</h3>
+                <p class="text-3xl font-bold text-emerald">8</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Resolved</h3>
+                <p class="text-3xl font-bold text-deepBlue">5</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Critical</h3>
+                <p class="text-3xl font-bold text-red">3</p>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid md:grid-cols-2 gap-10 mb-12">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="font-bold mb-4">Issues by Category</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="font-bold mb-4">Issues by Location</h3>
+                <canvas id="locationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- High Confidence Issues -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <h3 class="text-xl font-bold mb-6 text-navy">
+                High Confidence Issues (80%+)
+            </h3>
+
+            <div class="space-y-4">
+                <div class="border p-4 rounded flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold">Water Leakage — Hostel B</p>
+                        <p class="text-sm text-gray-500">Confidence: 91%</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald text-white rounded-full text-sm">
+                        Plumbing
+                    </span>
+                </div>
+
+                <div class="border p-4 rounded flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold">Fire Exit Blocked — Auditorium</p>
+                        <p class="text-sm text-gray-500">Confidence: 87%</p>
+                    </div>
+                    <span class="px-3 py-1 bg-red text-white rounded-full text-sm">
+                        Fire & Safety
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Charts Script -->
+    <script>
+        new Chart(document.getElementById("categoryChart"), {
+            type: "doughnut",
+            data: {
+                labels: ["Plumbing", "Electrical", "Housekeeping", "Fire & Safety"],
+                datasets: [{
+                    data: [5, 3, 2, 4],
+                    backgroundColor: ["#10B981", "#1E3A8A", "#F59E0B", "#EF4444"]
+                }]
+            }
+        });
+
+        new Chart(document.getElementById("locationChart"), {
+            type: "bar",
+            data: {
+                labels: ["Hostel A", "Hostel B", "Library", "Academic Block"],
+                datasets: [{
+                    label: "Issues",
+                    data: [4, 6, 3, 5],
+                    backgroundColor: "#1E3A8A"
+                }]
+            }
+        });
+    </script>
+
+</body>
+
+</html>
