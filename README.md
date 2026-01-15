@@ -39,6 +39,27 @@ CampusSuite solves this by combining:
 
 ---
 
+## 📸 Screenshots
+
+### Home
+
+![Home](screenshots)
+
+### Raise Issue
+
+![Hostel Issue](screenshots)
+![Campus Issue](screenshots)
+
+### Community Verification
+
+![Community](screenshots)
+
+### Admin Dashboard
+
+![Admin](screenshots)
+
+---
+
 ## 🛠 Tech Stack
 
 ### Frontend
