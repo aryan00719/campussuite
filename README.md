@@ -43,20 +43,11 @@ CampusSuite solves this by combining:
 
 ### Home
 
-![Home](screenshots)
-
 ### Raise Issue
-
-![Hostel Issue](screenshots)
-![Campus Issue](screenshots)
 
 ### Community Verification
 
-![Community](screenshots)
-
 ### Admin Dashboard
-
-![Admin](screenshots)
 
 ---
 
