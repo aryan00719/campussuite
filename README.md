@@ -41,13 +41,13 @@ CampusSuite solves this by combining:
 
 ## 📸 Screenshots
 
-### Home
+Home
 
-### Raise Issue
+Raise Issue
 
-### Community Verification
+Community Verification
 
-### Admin Dashboard
+Admin Dashboard
 
 ---
 
