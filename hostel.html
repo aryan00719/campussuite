@@ -198,7 +198,6 @@
 
             const location = `${hostel} - Floor ${floor} - Room ${room}`;
 
-            // ✅ DISABLE BUTTON
             submitBtn.disabled = true;
             submitBtn.innerText = "Submitting...";
             submitBtn.classList.add("opacity-70", "cursor-not-allowed");
@@ -206,7 +205,7 @@
             document.getElementById("loadingState").classList.remove("hidden");
             document.getElementById("aiResult").classList.add("hidden");
 
-            fetch("http://127.0.0.1:5000/issue", {
+            fetch("https://campussuite-backend-a7mx.onrender.com/issue", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -250,7 +249,6 @@
                     alert("Failed to submit issue.");
                 })
                 .finally(() => {
-                    // ✅ RE-ENABLE BUTTON
                     submitBtn.disabled = false;
                     submitBtn.innerText = "Submit Issue";
                     submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
