@@ -10,17 +10,11 @@ import os
 
 app = Flask(__name__)
 
-# ✅ CORS (OK)
+# ✅ SIMPLE + CORRECT CORS (Hackathon Safe)
 CORS(
     app,
-    resources={
-        r"/*": {
-            "origins": [
-                "http://localhost:5500",
-                "http://127.0.0.1:5500"
-            ]
-        }
-    }
+    supports_credentials=False,
+    resources={r"/*": {"origins": "*"}},
 )
 
 @app.route("/")
@@ -29,7 +23,10 @@ def home():
 
 @app.route("/issue", methods=["POST"])
 def create_issue():
-    data = request.json
+    data = request.get_json(silent=True)
+
+    if not data:
+        return jsonify({"error": "Invalid JSON"}), 400
 
     description = data.get("description")
     location = data.get("location")
@@ -37,7 +34,6 @@ def create_issue():
     if not description or not location:
         return jsonify({"error": "Missing description or location"}), 400
 
-    # 🔥 AI classification (Groq)
     category, priority = classify_issue(description)
 
     issue = {
@@ -60,12 +56,11 @@ def create_issue():
 
 @app.route("/admin/issues", methods=["GET"])
 def get_issues():
-    issues = get_all_issues()
-    return jsonify(issues)
+    return jsonify(get_all_issues())
 
 @app.route("/admin/issue/<issue_id>", methods=["PATCH"])
 def update_issue(issue_id):
-    data = request.json
+    data = request.get_json()
     new_status = data.get("status")
 
     if new_status not in ["Pending", "In Progress", "Resolved"]:
@@ -74,7 +69,6 @@ def update_issue(issue_id):
     update_issue_status(issue_id, new_status)
     return jsonify({"message": "Issue status updated"}), 200
 
-# 🔴 REQUIRED FOR RENDER
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
