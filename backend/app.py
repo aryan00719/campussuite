@@ -16,20 +16,32 @@ CORS(
         r"/*": {
             "origins": [
                 "http://localhost:5500",
-                "https://campussuite-git-main-aryan120504-2234s-projects.vercel.app",
+                "https://*.vercel.app",
                 "https://campussuite-backend-a7mx.onrender.com"
             ]
         }
-    }
+    },
+    methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
 
 @app.route("/")
 def home():
     return "Smart Campus Backend Running"
 
-@app.route("/issue", methods=["POST"])
+@app.route("/issue", methods=["POST", "OPTIONS"])
 def create_issue():
-    data = request.json
+    if request.method == "OPTIONS":
+        response = jsonify({"ok": True})
+        response.headers.add(
+            "Access-Control-Allow-Origin",
+            request.headers.get("Origin", "*")
+        )
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response, 200
+
+    data = request.get_json(silent=True) or {}
 
     description = data.get("description")
     location = data.get("location")
@@ -37,7 +49,6 @@ def create_issue():
     if not description or not location:
         return jsonify({"error": "Missing description or location"}), 400
 
-    # 🔥 AI classification (Groq)
     category, priority = classify_issue(description)
 
     issue = {
@@ -57,7 +68,7 @@ def create_issue():
         "category": category,
         "priority": priority
     }), 200
-
+    
 @app.route("/admin/issues", methods=["GET"])
 def get_issues():
     issues = get_all_issues()
@@ -74,7 +85,6 @@ def update_issue(issue_id):
     update_issue_status(issue_id, new_status)
     return jsonify({"message": "Issue status updated"}), 200
 
-# 🔴 REQUIRED FOR RENDER
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
