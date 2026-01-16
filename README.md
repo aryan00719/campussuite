@@ -243,17 +243,14 @@ cd frontend
 <table>
 <tr>
 <td align="center">
-<img src="https://github.com/aryan.png" width="100px;" alt="Aryan"/><br />
 <b>Aryan Mishra</b><br />
 <sub>Full Stack & AI</sub>
 </td>
 <td align="center">
-<img src="https://github.com/devansh.png" width="100px;" alt="Devansh"/><br />
 <b>Devansh Shukla</b><br />
 <sub>Backend & Firebase</sub>
 </td>
 <td align="center">
-<img src="https://github.com/shweta.png" width="100px;" alt="Shweta"/><br />
 <b>Shweta Mishra</b><br />
 <sub>Frontend & Design</sub>
 </td>
@@ -262,19 +259,6 @@ cd frontend
 
 ---
 
-## 🏆 Achievements
-
-- 🥇 **Best Campus Innovation** - GDG Open Innovation Hackathon 2026
-- 🌟 **Community Favorite** - Highest votes in peer judging
-- 💡 **Most Practical Solution** - Judge's Special Mention
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 🙏 Acknowledgments
 
@@ -287,7 +271,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ for better campus living**
+**Made  for better campus living**
 
 [Live Demo](https://campussuite.demo) • [Documentation](https://docs.campussuite.app) • [Report Bug](https://github.com/yourusername/campussuite/issues)
 
