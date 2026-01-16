@@ -1,32 +1,34 @@
 import os
 from groq import Groq
-from dotenv import load_dotenv
 
-load_dotenv()
+# ✅ Fail fast if API key is missing
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise RuntimeError("GROQ_API_KEY environment variable not set")
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+client = Groq(api_key=GROQ_API_KEY)
 
-def classify_issue(description):
+def classify_issue(description: str):
     prompt = f"""
-    You are an AI system for a campus maintenance app.
+You are an AI system for a campus maintenance app.
 
-    Classify the issue below.
+Classify the issue below.
 
-    Issue:
-    {description}
+Issue:
+{description}
 
-    Rules:
-    - Category must be ONE of:
-    Electrical, Plumbing, Cleaning, Internet, Furniture, Other
-    - Priority must be ONE of:
-    Low, Medium, High
-    - Respond in EXACT format below
-    - No explanations
+Rules:
+- Category must be ONE of:
+  Electrical, Plumbing, Cleaning, Internet, Furniture, Other
+- Priority must be ONE of:
+  Low, Medium, High
+- Respond in EXACT format below
+- No explanations
 
-    Format:
-    Category: <category>
-    Priority: <priority>
-    """
+Format:
+Category: <category>
+Priority: <priority>
+"""
 
     try:
         response = client.chat.completions.create(
@@ -47,7 +49,7 @@ def classify_issue(description):
         for line in text.splitlines():
             if line.startswith("Category:"):
                 category = line.replace("Category:", "").strip()
-            if line.startswith("Priority:"):
+            elif line.startswith("Priority:"):
                 priority = line.replace("Priority:", "").strip()
 
         return category, priority

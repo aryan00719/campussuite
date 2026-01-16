@@ -6,10 +6,11 @@ from flask_cors import CORS
 from services.firestore_service import add_issue, get_all_issues, update_issue_status
 from datetime import datetime
 from ai.classifier import classify_issue
+import os
 
 app = Flask(__name__)
 
-# ✅ Explicit CORS configuration (THIS FIXES YOUR ERROR)
+# ✅ CORS (OK)
 CORS(
     app,
     resources={
@@ -73,5 +74,7 @@ def update_issue(issue_id):
     update_issue_status(issue_id, new_status)
     return jsonify({"message": "Issue status updated"}), 200
 
+# 🔴 REQUIRED FOR RENDER
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
