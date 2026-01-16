@@ -10,6 +10,7 @@ import os
 
 app = Flask(__name__)
 
+# ✅ SIMPLE + CORRECT CORS (Hackathon Safe)
 CORS(
     app,
     supports_credentials=False,
