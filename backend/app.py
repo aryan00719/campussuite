@@ -10,14 +10,14 @@ import os
 
 app = Flask(__name__)
 
-# ✅ CORS (OK)
 CORS(
     app,
     resources={
         r"/*": {
             "origins": [
                 "http://localhost:5500",
-                "http://127.0.0.1:5500"
+                "https://campussuite-git-main-aryan120504-2234s-projects.vercel.app",
+                "https://campussuite-backend-a7mx.onrender.com"
             ]
         }
     }
