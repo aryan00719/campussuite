@@ -48,6 +48,10 @@
             Admin Dashboard
         </h2>
 
+        <button onclick="loadAdminData()" class="mb-6 px-4 py-2 bg-emerald text-white rounded hover:opacity-90">
+            🔄 Refresh Dashboard
+        </button>
+
         <p class="text-sm text-gray-500 mb-6">
             This dashboard highlights community-verified issues to help administrators prioritize action.
         </p>
@@ -56,22 +60,22 @@
         <div class="grid md:grid-cols-4 gap-6 mb-10">
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Open Issues</h3>
-                <p class="text-3xl font-bold text-amber">12</p>
+                <p id="openCount" class="text-3xl font-bold text-amber">0</p>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Verified</h3>
-                <p class="text-3xl font-bold text-emerald">8</p>
+                <p id="verifiedCount" class="text-3xl font-bold text-emerald">0</p>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Resolved</h3>
-                <p class="text-3xl font-bold text-deepBlue">5</p>
+                <p id="resolvedCount" class="text-3xl font-bold text-deepBlue">0</p>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <h3 class="text-sm text-gray-500">Critical</h3>
-                <p class="text-3xl font-bold text-red">3</p>
+                <p id="criticalCount" class="text-3xl font-bold text-red">0</p>
             </div>
         </div>
 
@@ -94,55 +98,108 @@
                 High Confidence Issues (80%+)
             </h3>
 
-            <div class="space-y-4">
-                <div class="border p-4 rounded flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold">Water Leakage — Hostel B</p>
-                        <p class="text-sm text-gray-500">Confidence: 91%</p>
-                    </div>
-                    <span class="px-3 py-1 bg-emerald text-white rounded-full text-sm">
-                        Plumbing
-                    </span>
-                </div>
-
-                <div class="border p-4 rounded flex justify-between items-center">
-                    <div>
-                        <p class="font-semibold">Fire Exit Blocked — Auditorium</p>
-                        <p class="text-sm text-gray-500">Confidence: 87%</p>
-                    </div>
-                    <span class="px-3 py-1 bg-red text-white rounded-full text-sm">
-                        Fire & Safety
-                    </span>
-                </div>
+            <div id="highConfidenceList" class="space-y-4 text-sm text-gray-600">
+                Loading...
             </div>
         </div>
 
     </main>
 
+    <script>
+        const API_BASE = "https://campussuite-backend-a7mx.onrender.com";
+
+        async function loadAdminData() {
+            const res = await fetch(`${API_BASE}/issues`);
+            const issues = await res.json();
+
+            document.querySelector("#openCount").innerText =
+                issues.filter(i => i.status === "Open").length;
+
+            document.querySelector("#verifiedCount").innerText =
+                issues.filter(i => i.status === "Verified").length;
+
+            document.querySelector("#resolvedCount").innerText =
+                issues.filter(i => i.status === "Resolved").length;
+
+            document.querySelector("#criticalCount").innerText =
+                issues.filter(i => i.priority === "High").length;
+
+            // 🔥 HIGH CONFIDENCE
+            const highConfidence = issues.filter(i => i.confidence >= 80);
+            const container = document.getElementById("highConfidenceList");
+
+            if (highConfidence.length === 0) {
+                container.innerHTML = "<p>No high-confidence issues yet.</p>";
+            } else {
+                container.innerHTML = highConfidence.map(i => `
+            <div class="border p-4 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">${i.description}</p>
+                    <p class="text-gray-500">${i.location} — Confidence ${i.confidence}%</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-white text-xs"
+                      style="background:${i.priority === "High" ? "#EF4444" : "#10B981"}">
+                    ${i.category}
+                </span>
+            </div>
+        `).join("");
+            }
+
+            renderCharts(issues);
+        }
+
+        loadAdminData();
+    </script>
+
     <!-- Charts Script -->
     <script>
-        new Chart(document.getElementById("categoryChart"), {
-            type: "doughnut",
-            data: {
-                labels: ["Plumbing", "Electrical", "Housekeeping", "Fire & Safety"],
-                datasets: [{
-                    data: [5, 3, 2, 4],
-                    backgroundColor: ["#10B981", "#1E3A8A", "#F59E0B", "#EF4444"]
-                }]
-            }
-        });
+        let categoryChart, locationChart;
 
-        new Chart(document.getElementById("locationChart"), {
-            type: "bar",
-            data: {
-                labels: ["Hostel A", "Hostel B", "Library", "Academic Block"],
-                datasets: [{
-                    label: "Issues",
-                    data: [4, 6, 3, 5],
-                    backgroundColor: "#1E3A8A"
-                }]
-            }
-        });
+        async function renderCharts(issues) {
+
+            // ---- CATEGORY COUNT ----
+            const categoryMap = {};
+            issues.forEach(i => {
+                categoryMap[i.category] = (categoryMap[i.category] || 0) + 1;
+            });
+
+            const categoryLabels = Object.keys(categoryMap);
+            const categoryData = Object.values(categoryMap);
+
+            if (categoryChart) categoryChart.destroy();
+            categoryChart = new Chart(document.getElementById("categoryChart"), {
+                type: "doughnut",
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryData,
+                        backgroundColor: ["#10B981", "#1E3A8A", "#F59E0B", "#EF4444", "#14B8A6"]
+                    }]
+                }
+            });
+
+            // ---- LOCATION COUNT ----
+            const locationMap = {};
+            issues.forEach(i => {
+                locationMap[i.location] = (locationMap[i.location] || 0) + 1;
+            });
+
+            const locationLabels = Object.keys(locationMap);
+            const locationData = Object.values(locationMap);
+
+            if (locationChart) locationChart.destroy();
+            locationChart = new Chart(document.getElementById("locationChart"), {
+                type: "bar",
+                data: {
+                    labels: locationLabels,
+                    datasets: [{
+                        label: "Issues",
+                        data: locationData,
+                        backgroundColor: "#1E3A8A"
+                    }]
+                }
+            });
+        }
     </script>
 
 </body>

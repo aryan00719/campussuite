@@ -119,25 +119,30 @@
 
     <!-- JS -->
     <script>
+        const API_BASE = "https://campussuite-backend-a7mx.onrender.com";
         function submitIssue() {
             const building = document.getElementById("building").value;
             const category = document.getElementById("category").value;
             const description = document.getElementById("description").value.trim();
+            const btn = event.target;
 
             if (!building || !category || !description) {
                 alert("Please fill all required fields.");
                 return;
             }
 
+            btn.disabled = true; // ✅ disable before request
+
             document.getElementById("loadingState").classList.remove("hidden");
             document.getElementById("aiResult").classList.add("hidden");
 
-            fetch("http://127.0.0.1:5000/issue", {
+            fetch(`${API_BASE}/issue`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     description: description,
-                    location: building
+                    location: building,
+                    userCategory: category
                 })
             })
                 .then(res => res.json())
@@ -154,6 +159,9 @@
                 })
                 .catch(() => {
                     alert("Failed to submit issue.");
+                })
+                .finally(() => {
+                    btn.disabled = false; // ✅ re-enable ONLY after completion
                 });
         }
     </script>

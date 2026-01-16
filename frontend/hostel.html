@@ -125,7 +125,7 @@
                 <label class="block mb-2 font-semibold">Room Number</label>
                 <input id="roomNumber" class="w-full border rounded p-2 mb-6" />
 
-                <button onclick="submitIssue()"
+                <button id="submitBtn" onclick="submitIssue()"
                     class="bg-emerald text-white px-6 py-3 rounded font-semibold hover:bg-teal">
                     Submit Issue
                 </button>
@@ -189,6 +189,7 @@
             const hostel = document.getElementById("hostelName").value.trim();
             const floor = document.getElementById("floor").value.trim();
             const room = document.getElementById("roomNumber").value.trim();
+            const submitBtn = document.getElementById("submitBtn");
 
             if (!description || !hostel || !floor || !room) {
                 alert("Please fill all required fields.");
@@ -197,14 +198,17 @@
 
             const location = `${hostel} - Floor ${floor} - Room ${room}`;
 
+            // ✅ DISABLE BUTTON
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+            submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+
             document.getElementById("loadingState").classList.remove("hidden");
             document.getElementById("aiResult").classList.add("hidden");
 
             fetch("http://127.0.0.1:5000/issue", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     description: description,
                     location: location
@@ -212,16 +216,12 @@
             })
                 .then(res => res.json())
                 .then(data => {
-                    // Hide loading
                     document.getElementById("loadingState").classList.add("hidden");
-
-                    // Show AI result
                     document.getElementById("aiResult").classList.remove("hidden");
 
                     document.getElementById("aiCategory").innerText = data.category;
                     document.getElementById("aiPriority").innerText = data.priority;
 
-                    // Priority color
                     const priorityEl = document.getElementById("aiPriority");
                     if (data.priority === "High") {
                         priorityEl.className = "text-red-500 font-semibold";
@@ -231,23 +231,16 @@
                         priorityEl.className = "text-emerald font-semibold";
                     }
 
-                    // Smarter confidence (based on priority)
-                    let confidence = data.priority === "High" ? 90 :
-                        data.priority === "Medium" ? 82 : 75;
+                    let confidence =
+                        data.priority === "High" ? 90 :
+                            data.priority === "Medium" ? 82 : 75;
 
                     const badge = document.getElementById("confidenceBadge");
                     badge.innerText = `AI Confidence: ${confidence}%`;
-
                     badge.className =
                         confidence >= 85
                             ? "inline-block px-3 py-1 rounded-full bg-emerald text-white text-sm font-semibold"
                             : "inline-block px-3 py-1 rounded-full bg-amber-500 text-white text-sm font-semibold";
-
-                    // Reset form (feels professional)
-                    document.getElementById("description").value = "";
-                    document.getElementById("hostelName").value = "";
-                    document.getElementById("floor").value = "";
-                    document.getElementById("roomNumber").value = "";
 
                     document.getElementById("aiResult")
                         .scrollIntoView({ behavior: "smooth" });
@@ -255,6 +248,12 @@
                 .catch(err => {
                     console.error("Error:", err);
                     alert("Failed to submit issue.");
+                })
+                .finally(() => {
+                    // ✅ RE-ENABLE BUTTON
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Issue";
+                    submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
                 });
         }
     </script>
