@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Issue | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        amber: "#F59E0B",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="max-w-4xl mx-auto p-10">
+
+        <h2 class="text-3xl font-bold text-navy mb-2">
+            Report Campus Issue
+        </h2>
+
+        <p class="text-sm text-gray-500 mb-8">
+            Report issues related to campus infrastructure such as academic blocks, library, parking, or roads.
+        </p>
+
+        <!-- Step 1: Building -->
+        <section class="mb-10">
+            <h3 class="text-xl font-semibold mb-4">1️⃣ Select Building</h3>
+
+            <select id="building" class="w-full border rounded p-3">
+                <option value="">Select building</option>
+                <option>Academic Block</option>
+                <option>Library</option>
+                <option>Auditorium</option>
+                <option>Parking Area</option>
+                <option>Roads</option>
+                <option>Laboratories</option>
+            </select>
+        </section>
+
+        <!-- Step 2: Category -->
+        <section class="mb-10">
+            <h3 class="text-xl font-semibold mb-4">2️⃣ Select Category</h3>
+
+            <select id="category" class="w-full border rounded p-3">
+                <option value="">Select category</option>
+                <option>Electrical</option>
+                <option>Plumbing</option>
+                <option>Housekeeping</option>
+                <option>Fire & Safety</option>
+                <option>Civil / Infrastructure</option>
+            </select>
+        </section>
+
+        <!-- Step 3: Issue Form -->
+        <section class="bg-white p-6 rounded-xl shadow">
+
+            <h3 class="text-xl font-semibold mb-6">3️⃣ Issue Details</h3>
+
+            <label class="block mb-2 font-semibold">Upload Image *</label>
+            <input type="file" class="mb-4 w-full" />
+
+            <label class="block mb-2 font-semibold">Description *</label>
+            <textarea id="description" class="w-full border rounded p-2 mb-6" rows="3"></textarea>
+
+            <button onclick="submitIssue()"
+                class="bg-emerald text-white px-6 py-3 rounded font-semibold hover:opacity-90">
+                Submit Issue
+            </button>
+
+        </section>
+
+        <!-- Loading -->
+        <section id="loadingState" class="hidden mt-10">
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <p class="text-lg font-semibold text-navy">🤖 AI is analyzing the issue…</p>
+                <p class="text-sm text-gray-500 mt-2">This usually takes a second</p>
+            </div>
+        </section>
+
+        <!-- AI Result -->
+        <section id="aiResult" class="hidden mt-10">
+            <div class="bg-white border-l-4 border-emerald p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold mb-4">🤖 AI Analysis</h3>
+
+                <p><strong>Category:</strong> <span id="aiCategory"></span></p>
+                <p><strong>Priority:</strong> <span id="aiPriority"></span></p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS -->
+    <script>
+        const API_BASE = "https://campussuite-backend-a7mx.onrender.com";
+        function submitIssue() {
+            const building = document.getElementById("building").value;
+            const category = document.getElementById("category").value;
+            const description = document.getElementById("description").value.trim();
+            const btn = event.target;
+
+            if (!building || !category || !description) {
+                alert("Please fill all required fields.");
+                return;
+            }
+
+            btn.disabled = true; // ✅ disable before request
+
+            document.getElementById("loadingState").classList.remove("hidden");
+            document.getElementById("aiResult").classList.add("hidden");
+
+            fetch(`${API_BASE}/issue`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    description: description,
+                    location: building,
+                    userCategory: category
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("loadingState").classList.add("hidden");
+                    document.getElementById("aiResult").classList.remove("hidden");
+
+                    document.getElementById("aiCategory").innerText = data.category;
+                    document.getElementById("aiPriority").innerText = data.priority;
+
+                    setTimeout(() => {
+                        window.location.href = "community.html";
+                    }, 1500);
+                })
+                .catch(() => {
+                    alert("Failed to submit issue.");
+                })
+                .finally(() => {
+                    btn.disabled = false; // ✅ re-enable ONLY after completion
+                });
+        }
+    </script>
+
+</body>
+
+</html>

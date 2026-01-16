@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        teal: "#14B8A6",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto p-10">
+
+        <h2 class="text-3xl font-bold text-center text-navy mb-10">
+            What type of issue do you want to report?
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-10">
+
+            <!-- Hostel Card -->
+            <a href="hostel.html" class="bg-white p-10 rounded-xl shadow hover:shadow-xl transition">
+                <h3 class="text-2xl font-bold mb-4">🏠 Hostel Issues</h3>
+                <p class="text-gray-600">
+                    Report issues related to rooms, common areas, laundry, plumbing,
+                    electrical services, and more.
+                </p>
+            </a>
+
+            <!-- Campus Card -->
+            <a href="campus.html" class="bg-white p-10 rounded-xl shadow hover:shadow-xl transition">
+                <h3 class="text-2xl font-bold mb-4">🏫 Campus Issues</h3>
+                <p class="text-gray-600">
+                    Report problems in academic blocks, library, parking areas,
+                    roads, labs, and shared infrastructure.
+                </p>
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        amber: "#F59E0B",
+                        red: "#EF4444",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-10">
+
+        <h2 class="text-3xl font-bold text-navy mb-8">
+            Admin Dashboard
+        </h2>
+
+        <button onclick="loadAdminData()" class="mb-6 px-4 py-2 bg-emerald text-white rounded hover:opacity-90">
+            🔄 Refresh Dashboard
+        </button>
+
+        <p class="text-sm text-gray-500 mb-6">
+            This dashboard highlights community-verified issues to help administrators prioritize action.
+        </p>
+
+        <!-- Status Cards -->
+        <div class="grid md:grid-cols-4 gap-6 mb-10">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Open Issues</h3>
+                <p id="openCount" class="text-3xl font-bold text-amber">0</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Verified</h3>
+                <p id="verifiedCount" class="text-3xl font-bold text-emerald">0</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Resolved</h3>
+                <p id="resolvedCount" class="text-3xl font-bold text-deepBlue">0</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="text-sm text-gray-500">Critical</h3>
+                <p id="criticalCount" class="text-3xl font-bold text-red">0</p>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid md:grid-cols-2 gap-10 mb-12">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="font-bold mb-4">Issues by Category</h3>
+                <canvas id="categoryChart"></canvas>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h3 class="font-bold mb-4">Issues by Location</h3>
+                <canvas id="locationChart"></canvas>
+            </div>
+        </div>
+
+        <!-- High Confidence Issues -->
+        <div class="bg-white p-6 rounded-xl shadow">
+            <h3 class="text-xl font-bold mb-6 text-navy">
+                High Confidence Issues (80%+)
+            </h3>
+
+            <div id="highConfidenceList" class="space-y-4 text-sm text-gray-600">
+                Loading...
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const API_BASE = "https://campussuite-backend-a7mx.onrender.com";
+
+        async function loadAdminData() {
+            const res = await fetch(`${API_BASE}/issues`);
+            const issues = await res.json();
+
+            document.querySelector("#openCount").innerText =
+                issues.filter(i => i.status === "Open").length;
+
+            document.querySelector("#verifiedCount").innerText =
+                issues.filter(i => i.status === "Verified").length;
+
+            document.querySelector("#resolvedCount").innerText =
+                issues.filter(i => i.status === "Resolved").length;
+
+            document.querySelector("#criticalCount").innerText =
+                issues.filter(i => i.priority === "High").length;
+
+            // 🔥 HIGH CONFIDENCE
+            const highConfidence = issues.filter(i => i.confidence >= 80);
+            const container = document.getElementById("highConfidenceList");
+
+            if (highConfidence.length === 0) {
+                container.innerHTML = "<p>No high-confidence issues yet.</p>";
+            } else {
+                container.innerHTML = highConfidence.map(i => `
+            <div class="border p-4 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">${i.description}</p>
+                    <p class="text-gray-500">${i.location} — Confidence ${i.confidence}%</p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-white text-xs"
+                      style="background:${i.priority === "High" ? "#EF4444" : "#10B981"}">
+                    ${i.category}
+                </span>
+            </div>
+        `).join("");
+            }
+
+            renderCharts(issues);
+        }
+
+        loadAdminData();
+    </script>
+
+    <!-- Charts Script -->
+    <script>
+        let categoryChart, locationChart;
+
+        async function renderCharts(issues) {
+
+            // ---- CATEGORY COUNT ----
+            const categoryMap = {};
+            issues.forEach(i => {
+                categoryMap[i.category] = (categoryMap[i.category] || 0) + 1;
+            });
+
+            const categoryLabels = Object.keys(categoryMap);
+            const categoryData = Object.values(categoryMap);
+
+            if (categoryChart) categoryChart.destroy();
+            categoryChart = new Chart(document.getElementById("categoryChart"), {
+                type: "doughnut",
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryData,
+                        backgroundColor: ["#10B981", "#1E3A8A", "#F59E0B", "#EF4444", "#14B8A6"]
+                    }]
+                }
+            });
+
+            // ---- LOCATION COUNT ----
+            const locationMap = {};
+            issues.forEach(i => {
+                locationMap[i.location] = (locationMap[i.location] || 0) + 1;
+            });
+
+            const locationLabels = Object.keys(locationMap);
+            const locationData = Object.values(locationMap);
+
+            if (locationChart) locationChart.destroy();
+            locationChart = new Chart(document.getElementById("locationChart"), {
+                type: "bar",
+                data: {
+                    labels: locationLabels,
+                    datasets: [{
+                        label: "Issues",
+                        data: locationData,
+                        backgroundColor: "#1E3A8A"
+                    }]
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>

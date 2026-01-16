@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Community Verification | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        amber: "#F59E0B",
+                        red: "#EF4444",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-10">
+
+        <!-- Header -->
+        <h2 class="text-3xl font-bold text-navy mb-2">
+            Community Verification
+        </h2>
+
+        <p class="text-sm text-gray-600 mb-2">
+            Verify issues reported by students to prevent spam and improve accuracy.
+        </p>
+
+        <p class="text-xs text-gray-500 mb-8">
+            Issues gain confidence as more students verify them. High-confidence issues are automatically escalated to
+            administration.
+        </p>
+
+        <!-- Issue Cards -->
+        <div id="issueList" class="grid md:grid-cols-2 gap-8"></div>
+
+    </main>
+
+    <!-- JS -->
+    <script>
+        // Dummy issues (simulated backend data)
+        const issues = [
+            {
+                id: 1,
+                title: "Water leaking from ceiling",
+                location: "Hostel B - Room 302",
+                confidence: 88,
+                confirmations: 3,
+                image: "https://via.placeholder.com/400x250"
+            },
+            {
+                id: 2,
+                title: "Broken corridor light",
+                location: "Hostel A - Floor 1",
+                confidence: 81,
+                confirmations: 5,
+                image: "https://via.placeholder.com/400x250"
+            }
+        ];
+
+        // Frontend-only one-user-one-vote
+        function hasVoted(id) {
+            return localStorage.getItem(`voted_${id}`) === "true";
+        }
+
+        function setVoted(id) {
+            localStorage.setItem(`voted_${id}`, "true");
+        }
+
+        function getConfidenceClass(score) {
+            if (score >= 85) return "bg-emerald text-white";
+            if (score >= 70) return "bg-amber text-white";
+            return "bg-gray-400 text-white";
+        }
+
+        function renderIssues() {
+            const container = document.getElementById("issueList");
+            container.innerHTML = "";
+
+            // 6️⃣ Sort by confidence (highest first)
+            issues.sort((a, b) => b.confidence - a.confidence);
+
+            issues.forEach(issue => {
+                const voted = hasVoted(issue.id);
+
+                const card = document.createElement("div");
+                card.className = "bg-white rounded-xl shadow overflow-hidden";
+
+                card.innerHTML = `
+                    <img src="${issue.image}" class="w-full h-48 object-cover" />
+
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-navy mb-1">
+                            ${issue.title}
+                        </h3>
+
+                        <p class="text-sm text-gray-500 mb-3">
+                            📍 ${issue.location}
+                        </p>
+
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${getConfidenceClass(issue.confidence)}">
+                                Confidence: ${issue.confidence}%
+                            </span>
+
+                            <span class="text-sm font-semibold">
+                                ✔ ${issue.confirmations} confirmations
+                            </span>
+                        </div>
+
+                        <div class="flex gap-4 text-sm">
+                            <button ${voted ? "disabled" : ""} 
+                                onclick="confirmIssue(${issue.id})"
+                                class="flex-1 ${voted ? "bg-gray-300 cursor-not-allowed" : "bg-emerald hover:opacity-90"} text-white py-2 rounded font-semibold">
+                                ✅ Confirm Issue
+                            </button>
+
+                            <button ${voted ? "disabled" : ""} 
+                                onclick="markTemporary(${issue.id})"
+                                class="flex-1 ${voted ? "bg-gray-300 cursor-not-allowed" : "bg-amber hover:opacity-90"} text-white py-2 rounded font-semibold">
+                                ❌ Temporary
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function confirmIssue(id) {
+            if (hasVoted(id)) return;
+
+            const issue = issues.find(i => i.id === id);
+            issue.confirmations += 1;
+            issue.confidence = Math.min(issue.confidence + 2, 95);
+
+            setVoted(id);
+            renderIssues();
+        }
+
+        function markTemporary(id) {
+            if (hasVoted(id)) return;
+
+            const issue = issues.find(i => i.id === id);
+            issue.confidence = Math.max(issue.confidence - 5, 60);
+
+            setVoted(id);
+            renderIssues();
+        }
+
+        renderIssues();
+    </script>
+
+</body>
+
+</html>

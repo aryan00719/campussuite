@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hostel Issue | CampusSuite</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        teal: "#14B8A6",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold cursor-pointer" onclick="location.href='home.html'">
+            CampusSuite
+        </h1>
+        <div class="space-x-6 text-sm font-medium">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="hostel.html" class="hover:underline">Raise Issue</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="max-w-6xl mx-auto p-10">
+
+        <!-- Step Indicator -->
+        <div class="flex items-center gap-4 mb-10">
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-emerald text-white font-bold">1</div>
+            <span class="font-semibold">Issue Type</span>
+            <div class="h-1 w-12 bg-gray-300"></div>
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-gray-600 font-bold">2
+            </div>
+            <span class="text-gray-500">Category</span>
+        </div>
+
+        <!-- Step 1 -->
+        <section id="step1">
+            <h2 class="text-2xl font-bold text-navy mb-6">
+                Select Hostel Issue Type
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <button onclick="selectIssueType('Personal')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🛏 Personal Issues
+                </button>
+
+                <button onclick="selectIssueType('Common Area')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🧹 Common Area Issues
+                </button>
+
+                <button onclick="selectIssueType('Other')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    📦 Other Issues
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step2" class="hidden mt-16">
+            <h2 class="text-2xl font-bold text-navy mb-6">
+                Select Issue Category
+            </h2>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <button onclick="selectCategory('Electrical')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    ⚡ Electrical
+                </button>
+                <button onclick="selectCategory('Plumbing')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🚿 Plumbing
+                </button>
+                <button onclick="selectCategory('Housekeeping')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🧹 Housekeeping
+                </button>
+                <button onclick="selectCategory('Furniture')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🪑 Furniture
+                </button>
+                <button onclick="selectCategory('Fire & Safety')"
+                    class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🔥 Fire & Safety
+                </button>
+                <button onclick="selectCategory('Pest Control')" class="bg-white p-6 rounded-xl shadow hover:shadow-lg">
+                    🐜 Pest Control
+                </button>
+            </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step3" class="hidden mt-16">
+            <h2 class="text-2xl font-bold text-navy mb-6">
+                Submit Issue Details
+            </h2>
+
+            <div class="bg-white p-6 rounded-xl shadow max-w-xl">
+
+                <label class="block mb-2 font-semibold">Upload Image *</label>
+                <input type="file" id="issueImage" class="mb-4 w-full" />
+
+                <label class="block mb-2 font-semibold">Description</label>
+                <textarea id="description" class="w-full border rounded p-2 mb-4" rows="3"></textarea>
+
+                <label class="block mb-2 font-semibold">Hostel Name</label>
+                <input id="hostelName" class="w-full border rounded p-2 mb-4" />
+
+                <label class="block mb-2 font-semibold">Floor</label>
+                <input id="floor" class="w-full border rounded p-2 mb-4" />
+
+                <label class="block mb-2 font-semibold">Room Number</label>
+                <input id="roomNumber" class="w-full border rounded p-2 mb-6" />
+
+                <button id="submitBtn" onclick="submitIssue()"
+                    class="bg-emerald text-white px-6 py-3 rounded font-semibold hover:bg-teal">
+                    Submit Issue
+                </button>
+            </div>
+        </section>
+
+        <!-- Loading -->
+        <section id="loadingState" class="hidden mt-10 max-w-xl">
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <p class="text-lg font-semibold text-navy">🤖 AI is analyzing the issue…</p>
+                <p class="text-sm text-gray-500 mt-2">This usually takes a second</p>
+            </div>
+        </section>
+
+        <!-- AI Result -->
+        <section id="aiResult" class="hidden mt-16 max-w-xl">
+            <div class="bg-white border-l-4 border-emerald p-6 rounded-xl shadow">
+                <h3 class="text-xl font-bold text-navy mb-4">
+                    🤖 AI Analysis Result
+                </h3>
+                <p class="text-sm text-gray-500 mb-4">
+                    Verified automatically using AI classification
+                </p>
+
+                <p class="mb-2">
+                    <strong>Category:</strong>
+                    <span id="aiCategory" class="text-emerald font-semibold"></span>
+                </p>
+
+                <p class="mb-2">
+                    <strong>Priority:</strong>
+                    <span id="aiPriority" class="font-semibold"></span>
+                </p>
+
+                <p class="mt-4">
+                    <span id="confidenceBadge"
+                        class="inline-block px-3 py-1 rounded-full text-white text-sm font-semibold">
+                    </span>
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS -->
+    <script>
+        function selectIssueType(type) {
+            console.log("Selected Issue Type:", type);
+            document.getElementById("step2").classList.remove("hidden");
+            document.getElementById("step2").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function selectCategory(category) {
+            console.log("Selected Category:", category);
+            document.getElementById("step3").classList.remove("hidden");
+            document.getElementById("step3").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function submitIssue() {
+            const description = document.getElementById("description").value.trim();
+            const hostel = document.getElementById("hostelName").value.trim();
+            const floor = document.getElementById("floor").value.trim();
+            const room = document.getElementById("roomNumber").value.trim();
+            const submitBtn = document.getElementById("submitBtn");
+
+            if (!description || !hostel || !floor || !room) {
+                alert("Please fill all required fields.");
+                return;
+            }
+
+            const location = `${hostel} - Floor ${floor} - Room ${room}`;
+
+            // ✅ DISABLE BUTTON
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+            submitBtn.classList.add("opacity-70", "cursor-not-allowed");
+
+            document.getElementById("loadingState").classList.remove("hidden");
+            document.getElementById("aiResult").classList.add("hidden");
+
+            fetch("http://127.0.0.1:5000/issue", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    description: description,
+                    location: location
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("loadingState").classList.add("hidden");
+                    document.getElementById("aiResult").classList.remove("hidden");
+
+                    document.getElementById("aiCategory").innerText = data.category;
+                    document.getElementById("aiPriority").innerText = data.priority;
+
+                    const priorityEl = document.getElementById("aiPriority");
+                    if (data.priority === "High") {
+                        priorityEl.className = "text-red-500 font-semibold";
+                    } else if (data.priority === "Medium") {
+                        priorityEl.className = "text-amber-500 font-semibold";
+                    } else {
+                        priorityEl.className = "text-emerald font-semibold";
+                    }
+
+                    let confidence =
+                        data.priority === "High" ? 90 :
+                            data.priority === "Medium" ? 82 : 75;
+
+                    const badge = document.getElementById("confidenceBadge");
+                    badge.innerText = `AI Confidence: ${confidence}%`;
+                    badge.className =
+                        confidence >= 85
+                            ? "inline-block px-3 py-1 rounded-full bg-emerald text-white text-sm font-semibold"
+                            : "inline-block px-3 py-1 rounded-full bg-amber-500 text-white text-sm font-semibold";
+
+                    document.getElementById("aiResult")
+                        .scrollIntoView({ behavior: "smooth" });
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    alert("Failed to submit issue.");
+                })
+                .finally(() => {
+                    // ✅ RE-ENABLE BUTTON
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Issue";
+                    submitBtn.classList.remove("opacity-70", "cursor-not-allowed");
+                });
+        }
+    </script>
+
+</body>
+
+</html>

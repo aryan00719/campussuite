@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Campus Infrastructure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: "#0F2A44",
+                        deepBlue: "#1E3A8A",
+                        emerald: "#10B981",
+                        teal: "#14B8A6",
+                        amber: "#F59E0B",
+                        danger: "#EF4444",
+                        bgLight: "#F8FAFC",
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-bgLight text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-gradient-to-r from-deepBlue to-navy text-white px-6 py-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">Smart Campus</h1>
+        <div class="space-x-4">
+            <a href="home.html" class="hover:underline">Home</a>
+            <a href="community.html" class="hover:underline">Community</a>
+            <a href="admin.html" class="hover:underline">Admin</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="p-8">
+        <!-- Hero Section -->
+        <section class="text-center py-16">
+            <h2 class="text-4xl font-bold text-navy mb-4">
+                Smart Campus Infrastructure Management
+            </h2>
+            <p class="text-gray-600 max-w-2xl mx-auto mb-8">
+                AI-powered and community-verified issue reporting to keep campus life smooth, transparent, and
+                accountable.
+            </p>
+
+            <div class="flex justify-center gap-4">
+                <a href="home.html" class="bg-emerald text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90">
+                    Report Issue
+                </a>
+                <a href="#how-it-works"
+                    class="border border-deepBlue text-deepBlue px-6 py-3 rounded-lg font-semibold hover:bg-deepBlue hover:text-white">
+                    How it Works
+                </a>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section id="how-it-works" class="py-16">
+            <h3 class="text-3xl font-bold text-center mb-12 text-navy">
+                How It Works
+            </h3>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h4 class="text-xl font-semibold mb-2">📝 Report</h4>
+                    <p class="text-gray-600">
+                        Students and staff report issues with photos, location, and description.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h4 class="text-xl font-semibold mb-2">🤝 Verify</h4>
+                    <p class="text-gray-600">
+                        Community members confirm issues to prevent spam and increase trust.
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow">
+                    <h4 class="text-xl font-semibold mb-2">🛠 Resolve</h4>
+                    <p class="text-gray-600">
+                        Admins prioritize verified issues using AI-powered categorization.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hostel vs Campus -->
+        <section class="py-16 grid md:grid-cols-2 gap-8">
+            <a href="hostel.html" class="bg-white p-8 rounded-xl shadow hover:shadow-lg">
+                <h3 class="text-2xl font-bold mb-2">🏠 Hostel Issues</h3>
+                <p class="text-gray-600">
+                    Personal rooms, common areas, laundry, plumbing, electrical and more.
+                </p>
+            </a>
+
+            <a href="campus.html" class="bg-white p-8 rounded-xl shadow hover:shadow-lg">
+                <h3 class="text-2xl font-bold mb-2">🏫 Campus Issues</h3>
+                <p class="text-gray-600">
+                    Academic blocks, library, parking, roads, labs and public infrastructure.
+                </p>
+            </a>
+        </section>
+
+        <!-- Anti Misuse -->
+        <section class="py-12 text-center bg-white rounded-xl shadow">
+            <h3 class="text-2xl font-bold text-navy mb-4">
+                Built to Prevent Spam & Misuse
+            </h3>
+            <p class="text-gray-600 max-w-3xl mx-auto">
+                Every issue requires evidence and is verified by the community before action.
+                Confidence scores ensure only real problems get priority.
+            </p>
+        </section>
+    </main>
+
+</body>
+
+</html>
